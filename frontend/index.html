@@ -8,10 +8,39 @@
 
   <form id="recipeForm">
     <input type="text" id="ingredients" placeholder="Ingredients, comma separated" />
-    <select id="goal">
-      <option value="bulk">Bulk</option>
-      <option value="cut">Cut</option>
     </select>
+
+
+     <!-- Advanced toggle -->
+  <button type="button" id="toggleAdvanced">Advanced Options</button>
+
+  <!-- Advanced Sections (hidden by default) -->
+  <div id="advancedSection" style="display:none;">
+    <button type="button" id="toggleNutrition">Nutritional Breakdown</button>
+    <div id="nutritionSection" style="display:none;">
+      <label>Carbs Min: <input type="number" id="minCarbs" /></label>
+      <label>Carbs Max: <input type="number" id="maxCarbs" /></label>
+      <label>Protein Min: <input type="number" id="minProtein" /></label>
+      <label>Protein Max: <input type="number" id="maxProtein" /></label>
+      <label>Fat Min: <input type="number" id="minFat" /></label>
+      <label>Fat Max: <input type="number" id="maxFat" /></label>
+    </div>
+
+    <button type="button" id="toggleCalories">Caloric Needs</button>
+    <div id="caloriesSection" style="display:none;">
+      <label>Weight (kg): <input type="number" id="weight" /></label>
+      <label>Activity Level:
+        <select id="activity">
+          <option value="sedentary">Sedentary</option>
+          <option value="light">Light</option>
+          <option value="moderate">Moderate</option>
+          <option value="active">Active</option>
+        </select>
+      </label>
+      <label>Target Calories: <input type="number" id="targetCalories" /></label>
+    </div>
+  </div>
+
     <button type="submit">Get Recipes</button>
   </form>
 
