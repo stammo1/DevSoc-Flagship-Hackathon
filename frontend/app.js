@@ -34,7 +34,12 @@ toggleBulkCutBtn.addEventListener('click', () => {
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const ingredients = document.getElementById('ingredients').value.split(',');
+  const ingredients = document
+  .getElementById('ingredients')
+  .value
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
   const goal = document.getElementById('goal') ? document.getElementById('goal').value : null;
 
   // Grab advanced fields if they exist
@@ -79,37 +84,90 @@ form.addEventListener('submit', async (e) => {
 
     recipesDiv.innerHTML = '';
 
-    if (url.includes('recipes-by-goal')) {
+  if (url.includes('recipes-by-goal')) {
   const { meta, recipes } = data;
 
-  recipesDiv.innerHTML += `
-    <div>
-      <h2>Nutrition Summary</h2>
+  // cute meta card
+  const metaCard = document.createElement('div');
+  metaCard.className = 'recipe-card';
+  metaCard.innerHTML = `
+    <div class="recipe-body">
+      <h3 class="recipe-title">Nutrition Summary</h3>
       <p><strong>Maintenance:</strong> ${meta.maintenance} kcal/day</p>
       <p><strong>Target:</strong> ${meta.targetDaily} kcal/day (${meta.goal})</p>
       <p><strong>Per meal:</strong> ${meta.perMeal} kcal (range ${meta.minCalories}-${meta.maxCalories})</p>
     </div>
   `;
+  recipesDiv.appendChild(metaCard);
 
   if (!recipes.length) {
     recipesDiv.innerHTML += '<p>No recipes found.</p>';
-  } else {
-    recipes.forEach(recipe => {
-      const div = document.createElement('div');
-      div.style.border = '1px solid #ccc';
-      div.style.padding = '10px';
-      div.style.margin = '10px 0';
-      div.innerHTML = `
-        <h3>${recipe.title}</h3>
-        <img src="${recipe.image}" alt="${recipe.title}" width="200">
-        <p><strong>Calories:</strong> ${recipe.calories ?? "N/A"}</p>
-      `;
-      recipesDiv.appendChild(div);
-    });
+    return;
   }
 
-  return; // stop here so the old /recipes rendering doesn’t run
+  // same card layout as normal recipes
+  const fmt = (t) => (t || '').toString().trim();
+  recipes.forEach((recipe) => {
+    const used = Array.isArray(recipe.usedIngredients) ? recipe.usedIngredients : [];
+    const missed = Array.isArray(recipe.missedIngredients) ? recipe.missedIngredients : [];
+
+    const usedList = used.length
+      ? `<ul>${used.map(i => `<li>${fmt(i)}</li>`).join('')}</ul>`
+      : '<p>—</p>';
+
+    const missedList = missed.length
+      ? `<ul>${missed.map(i => `<li>${fmt(i)}</li>`).join('')}</ul>`
+      : '<p>—</p>';
+
+    const summary = recipe.summary || 'No summary available.';
+    const instructions = recipe.instructions || 'No instructions provided.';
+
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
+    card.dataset.title = (recipe.title || '').toLowerCase();
+
+    card.innerHTML = `
+      <div class="recipe-banner">
+        <img src="${recipe.image}" alt="${recipe.title}">
+        <div class="pin">📌</div>
+        <div class="chips">
+          <span class="chip kcal">${recipe.calories ? Math.round(recipe.calories) + ' kcal' : 'kcal n/a'}</span>
+          <span class="chip have">Have ${used.length}</span>
+          <span class="chip need">Need ${missed.length}</span>
+        </div>
+      </div>
+
+      <div class="recipe-body">
+        <h3 class="recipe-title">${recipe.title}</h3>
+
+        <h4>Ingredients you have:</h4>
+        ${usedList}
+
+        <h4>Ingredients you need:</h4>
+        ${missedList}
+
+        <div class="summary"><strong>Summary:</strong> ${summary}</div>
+
+        <button class="toggle-instr" type="button">Show Instructions</button>
+        <div class="instructions collapsed">${instructions}</div>
+
+        <a class="ext-link" href="https://spoonacular.com/recipes/${encodeURIComponent(recipe.title)}-${recipe.id}" target="_blank" rel="noopener">View on Spoonacular →</a>
+      </div>
+    `;
+
+    const btn = card.querySelector('.toggle-instr');
+    const instr = card.querySelector('.instructions');
+    btn.addEventListener('click', () => {
+      const collapsed = instr.classList.toggle('collapsed');
+      btn.textContent = collapsed ? 'Show Instructions' : 'Hide Instructions';
+    });
+
+    recipesDiv.appendChild(card);
+  });
+
+  return; 
 }
+
 
     if (data.length === 0) {
       recipesDiv.innerHTML = '<p>No recipes found.</p>';
@@ -117,30 +175,76 @@ form.addEventListener('submit', async (e) => {
     }
 
     data.forEach(recipe => {
-      const div = document.createElement('div');
-      div.style.border = '1px solid #ccc';
-      div.style.padding = '10px';
-      div.style.margin = '10px 0';
+      const fmtIng = (ing) => {
+        if (!ing) return '';
+  if (typeof ing === 'string') return ing.trim();  // handle strings from backend
+  const txt =
+    ing.original ??
+    ing.originalName ??
+    ing.name ??
+    [ing.amount, ing.unit, ing.name].filter(Boolean).join(' ');
+  return String(txt || '').trim();
+};
 
-      const usedList = recipe.usedIngredients.length
-        ? `<ul>${recipe.usedIngredients.map(i => `<li>${i.original}</li>`).join('')}</ul>`
-        : '<p>No ingredients you already have are needed.</p>';
+data.forEach((recipe) => {
+  const used = Array.isArray(recipe.usedIngredients) ? recipe.usedIngredients : [];
+  const missed = Array.isArray(recipe.missedIngredients) ? recipe.missedIngredients : [];
 
-      const missedList = recipe.missedIngredients.length
-        ? `<ul>${recipe.missedIngredients.map(i => `<li>${i.original}</li>`).join('')}</ul>`
-        : '<p>You have all ingredients!</p>';
+  const usedList = used.length
+    ? `<ul>${used.map(i => `<li>${fmtIng(i)}</li>`).join('')}</ul>`
+    : '<p>—</p>';
 
-      div.innerHTML = `
-        <h3>${recipe.title}</h3>
-        <img src="${recipe.image}" alt="${recipe.title}" width="200">
-        <h4>Ingredients you have:</h4>
-        ${usedList}
-        <h4>Ingredients you need:</h4>
-        ${missedList}
-      `;
+  const missedList = missed.length
+    ? `<ul>${missed.map(i => `<li>${fmtIng(i)}</li>`).join('')}</ul>`
+    : '<p>—</p>';
 
-      recipesDiv.appendChild(div);
+  const summary = recipe.summary ? recipe.summary : 'No summary available.';
+  const instructions = recipe.instructions ? recipe.instructions : 'No instructions provided.';
+
+  const card = document.createElement('div');
+  card.className = 'recipe-card';
+  card.dataset.title = (recipe.title || '').toLowerCase();
+
+  card.innerHTML = `
+    <div class="recipe-banner">
+      <img src="${recipe.image}" alt="${recipe.title}">
+      <div class="pin">📌</div>
+      <div class="chips">
+        <span class="chip have">Have ${used.length}</span>
+        <span class="chip need">Need ${missed.length}</span>
+      </div>
+    </div>
+
+    <div class="recipe-body">
+      <h3 class="recipe-title">${recipe.title}</h3>
+
+      <h4>Ingredients you have:</h4>
+      ${usedList}
+
+      <h4>Ingredients you need:</h4>
+      ${missedList}
+
+      <div class="summary"><strong>Summary:</strong> ${summary}</div>
+
+      <button class="toggle-instr" type="button">Show Instructions</button>
+      <div class="instructions collapsed">${instructions}</div>
+
+      <a class="ext-link" href="https://spoonacular.com/recipes/${encodeURIComponent(recipe.title)}-${recipe.id}" target="_blank" rel="noopener">View on Spoonacular →</a>
+    </div>
+  `;
+
+  // expand/collapse instructions
+  const btn = card.querySelector('.toggle-instr');
+  const instr = card.querySelector('.instructions');
+  btn.addEventListener('click', () => {
+    const isCollapsed = instr.classList.toggle('collapsed');
+    btn.textContent = isCollapsed ? 'Show Instructions' : 'Hide Instructions';
+  });
+
+  recipesDiv.appendChild(card);
+});
     });
+    
   } catch (err) {
     console.error(err);
     recipesDiv.innerHTML = '<p>Failed to fetch recipes.</p>';
