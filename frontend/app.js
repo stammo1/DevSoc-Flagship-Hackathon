@@ -108,7 +108,7 @@ form.addEventListener('submit', async (e) => {
     });
   }
 
-  return; // stop here so the old /recipes rendering doesn’t run
+  return; // stop here so the old /recipes rendering doesn't run
 }
 
     if (data.length === 0) {
@@ -133,6 +133,7 @@ form.addEventListener('submit', async (e) => {
       div.innerHTML = `
         <h3>${recipe.title}</h3>
         <img src="${recipe.image}" alt="${recipe.title}" width="200">
+        <p><strong>Nutrition:</strong> Carbs: ${recipe.carbs ?? 'N/A'}g | Protein: ${recipe.protein ?? 'N/A'}g | Fat: ${recipe.fat ?? 'N/A'}g</p>
         <h4>Ingredients you have:</h4>
         ${usedList}
         <h4>Ingredients you need:</h4>
