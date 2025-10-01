@@ -87,7 +87,7 @@ app.post('/recipes', async (req, res) => {
       });
     }
 
-    recipes = recipes.slice(0, 8);
+    recipes = recipes.slice(0, 10);
     res.json(recipes);
   } catch (err) {
     console.error(err.response?.data || err.message);

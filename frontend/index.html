@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meal Planner</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -9,7 +11,6 @@
 
   <form id="recipeForm">
     <input type="text" id="ingredients" placeholder="Ingredients, comma separated" />
-    </select>
 
      <!-- Advanced toggle -->
   <button type="button" id="toggleAdvanced">Advanced Options</button>
@@ -75,7 +76,18 @@
   <!-- Recipes list -->
   <div id="recipes"></div>
 
+  <!-- Floating decorative icons -->
+  <div class="floating-icon" style="top: 10%; left: 5%;">&#127828;</div>
+  <div class="floating-icon" style="top: 20%; right: 8%;">&#127859;</div>
+  <div class="floating-icon" style="bottom: 15%; left: 12%;">&#127813;</div>
+  <div class="floating-icon" style="bottom: 20%; right: 10%;">&#127856;</div>
 
+  <!-- Background emoji decorations -->
+  <div class="bg-emoji" aria-hidden="true">
+    <span>&#127789;</span><span>&#127813;</span><span>&#127859;</span><span>&#127847;</span>
+    <span>&#127817;</span><span>&#129367;</span><span>&#127836;</span><span>&#127838;</span>
+    <span>&#127812;</span><span>&#129361;</span><span>&#127827;</span><span>&#127856;</span>
+  </div>
 
   <script src="app.js"></script>
 </body>
