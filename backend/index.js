@@ -41,7 +41,21 @@ app.post('/recipes', async (req, res) => {
           const protein = parseFloat(nutritionResponse.data.protein.replace('g', ''));
           const fat = parseFloat(nutritionResponse.data.fat.replace('g', ''));
 
-          return { ...recipe, carbs, protein, fat };
+          const infoResponse = await axios.get(
+            `https://api.spoonacular.com/recipes/${recipe.id}/information`,
+            {
+              params: { apiKey: process.env.SPOONACULAR_KEY }
+            }
+          );
+
+          return { 
+            ...recipe, 
+            carbs, 
+            protein, 
+            fat,
+            instructions: infoResponse.data.instructions || 'No instructions available',
+            sourceUrl: infoResponse.data.sourceUrl
+          };
         } catch (error) {
           console.error(`Error fetching nutrition for recipe ${recipe.id}:`, error.message);
           return recipe;
@@ -73,7 +87,7 @@ app.post('/recipes', async (req, res) => {
       });
     }
 
-    recipes = recipes.slice(0, 5);
+    recipes = recipes.slice(0, 8);
     res.json(recipes);
   } catch (err) {
     console.error(err.response?.data || err.message);
@@ -81,10 +95,7 @@ app.post('/recipes', async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
-});
-
+// MOVED THIS ROUTE BEFORE app.listen() - THIS IS THE ONLY CHANGE!
 app.post('/recipes-by-goal', async (req, res) => {
   try {
     const { ingredients = [], gender, weightKg, age, goal } = req.body;
@@ -122,11 +133,39 @@ app.post('/recipes-by-goal', async (req, res) => {
 
     const { data } = await axios.get('https://api.spoonacular.com/recipes/complexSearch', { params });
 
-    const results = (data.results || []).map(r => ({
-      id: r.id,
-      title: r.title,
-      image: r.image,
-      calories: r.nutrition?.nutrients?.find(n => n.name === 'Calories')?.amount ?? null
+    const results = await Promise.all((data.results || []).map(async r => {
+      const nutrients = r.nutrition?.nutrients || [];
+      
+      try {
+        const infoResponse = await axios.get(
+          `https://api.spoonacular.com/recipes/${r.id}/information`,
+          {
+            params: { apiKey: process.env.SPOONACULAR_KEY }
+          }
+        );
+
+        return {
+          id: r.id,
+          title: r.title,
+          image: r.image,
+          calories: nutrients.find(n => n.name === 'Calories')?.amount ?? null,
+          protein: nutrients.find(n => n.name === 'Protein')?.amount ?? null,
+          carbs: nutrients.find(n => n.name === 'Carbohydrates')?.amount ?? null,
+          fat: nutrients.find(n => n.name === 'Fat')?.amount ?? null,
+          instructions: infoResponse.data.instructions || 'No instructions available',
+          sourceUrl: infoResponse.data.sourceUrl
+        };
+      } catch (error) {
+        return {
+          id: r.id,
+          title: r.title,
+          image: r.image,
+          calories: nutrients.find(n => n.name === 'Calories')?.amount ?? null,
+          protein: nutrients.find(n => n.name === 'Protein')?.amount ?? null,
+          carbs: nutrients.find(n => n.name === 'Carbohydrates')?.amount ?? null,
+          fat: nutrients.find(n => n.name === 'Fat')?.amount ?? null
+        };
+      }
     }));
 
     res.json({
@@ -141,4 +180,8 @@ app.post('/recipes-by-goal', async (req, res) => {
     console.error(err.response?.data || err.message);
     res.status(500).json({ error: 'Error fetching goal-based recipes' });
   }
+});
+
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
 });

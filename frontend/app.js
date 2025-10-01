@@ -99,17 +99,28 @@ form.addEventListener('submit', async (e) => {
       div.style.border = '1px solid #ccc';
       div.style.padding = '10px';
       div.style.margin = '10px 0';
+      
+      const instructionsHtml = recipe.instructions 
+        ? `<div><h4>Instructions:</h4><p>${recipe.instructions}</p></div>`
+        : '';
+      
+      const sourceHtml = recipe.sourceUrl 
+        ? `<p><a href="${recipe.sourceUrl}" target="_blank">View Original Recipe</a></p>`
+        : '';
+      
       div.innerHTML = `
         <h3>${recipe.title}</h3>
         <img src="${recipe.image}" alt="${recipe.title}" width="200">
         <p><strong>Calories:</strong> ${recipe.calories ? Math.round(recipe.calories) : "N/A"}</p>
         <p><strong>Nutrition:</strong> Carbs: ${recipe.carbs ? Math.round(recipe.carbs) : 'N/A'}g | Protein: ${recipe.protein ? Math.round(recipe.protein) : 'N/A'}g | Fat: ${recipe.fat ? Math.round(recipe.fat) : 'N/A'}g</p>
+        ${instructionsHtml}
+        ${sourceHtml}
       `;
       recipesDiv.appendChild(div);
     });
   }
 
-  return;
+  return; // stop here so the old /recipes rendering doesn't run
 }
 
     if (data.length === 0) {
@@ -131,6 +142,14 @@ form.addEventListener('submit', async (e) => {
         ? `<ul>${recipe.missedIngredients.map(i => `<li>${i.original}</li>`).join('')}</ul>`
         : '<p>You have all ingredients!</p>';
 
+      const instructionsHtml = recipe.instructions 
+        ? `<div><h4>Instructions:</h4><p>${recipe.instructions}</p></div>`
+        : '';
+      
+      const sourceHtml = recipe.sourceUrl 
+        ? `<p><a href="${recipe.sourceUrl}" target="_blank">View Original Recipe</a></p>`
+        : '';
+
       div.innerHTML = `
         <h3>${recipe.title}</h3>
         <img src="${recipe.image}" alt="${recipe.title}" width="200">
@@ -139,6 +158,8 @@ form.addEventListener('submit', async (e) => {
         ${usedList}
         <h4>Ingredients you need:</h4>
         ${missedList}
+        ${instructionsHtml}
+        ${sourceHtml}
       `;
 
       recipesDiv.appendChild(div);
