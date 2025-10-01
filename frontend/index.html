@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Meal Planner</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Meal Planner</h1>
@@ -18,13 +19,22 @@
   <div id="advancedSection" style="display:none;">
     <button type="button" id="toggleNutrition">Nutritional Breakdown</button>
     <div id="nutritionSection" style="display:none;">
-      <label>Carbs Min: <input type="number" id="minCarbs" /></label>
-      <label>Carbs Max: <input type="number" id="maxCarbs" /></label>
-      <label>Protein Min: <input type="number" id="minProtein" /></label>
-      <label>Protein Max: <input type="number" id="maxProtein" /></label>
-      <label>Fat Min: <input type="number" id="minFat" /></label>
-      <label>Fat Max: <input type="number" id="maxFat" /></label>
+      <div class="nutrient-row">
+        <label>Carbs Min: <input type="number" id="minCarbs" /></label>
+        <label>Carbs Max: <input type="number" id="maxCarbs" /></label>
+      </div>
+    
+      <div class="nutrient-row">
+        <label>Protein Min: <input type="number" id="minProtein" /></label>
+        <label>Protein Max: <input type="number" id="maxProtein" /></label>
+      </div>
+    
+      <div class="nutrient-row">
+        <label>Fat Min: <input type="number" id="minFat" /></label>
+        <label>Fat Max: <input type="number" id="maxFat" /></label>
+      </div>
     </div>
+    
 
     <button type="button" id="toggleCalories">Caloric Needs</button>
     <div id="caloriesSection" style="display:none;">
@@ -44,7 +54,10 @@
     <button type="submit">Get Recipes</button>
   </form>
 
+  <!-- Recipes list -->
   <div id="recipes"></div>
+
+
 
   <script src="app.js"></script>
 </body>
