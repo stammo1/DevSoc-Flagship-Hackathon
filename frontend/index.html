@@ -11,7 +11,6 @@
     <input type="text" id="ingredients" placeholder="Ingredients, comma separated" />
     </select>
 
-
      <!-- Advanced toggle -->
   <button type="button" id="toggleAdvanced">Advanced Options</button>
 
@@ -34,7 +33,26 @@
         <label>Fat Max: <input type="number" id="maxFat" /></label>
       </div>
     </div>
-    
+
+      <!-- Bulk / Cut toggle -->
+  <button type="button" id="toggleBulkCut">Bulk / Cut</button>
+  <div id="bulkCutSection" style="display:none;">
+    <label>Gender:
+      <select id="gender">
+        <option value="">--</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </label>
+    <label>Age: <input type="number" id="age" /></label>
+    <label>Weight (kg): <input type="number" id="bulkWeight" /></label>
+    <label>Goal:
+      <select id="bulkGoal">
+        <option value="bulk">Bulk</option>
+        <option value="cut">Cut</option>
+      </select>
+    </label>
+  </div>
 
     <button type="button" id="toggleCalories">Caloric Needs</button>
     <div id="caloriesSection" style="display:none;">

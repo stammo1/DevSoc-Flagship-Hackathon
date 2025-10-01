@@ -8,6 +8,7 @@ toggleAdvancedBtn.addEventListener('click', () => {
   advancedSection.style.display = advancedSection.style.display === 'none' ? 'block' : 'none';
 });
 
+
 // Toggle Nutritional Breakdown
 const toggleNutritionBtn = document.getElementById('toggleNutrition');
 const nutritionSection = document.getElementById('nutritionSection');
@@ -20,6 +21,13 @@ const toggleCaloriesBtn = document.getElementById('toggleCalories');
 const caloriesSection = document.getElementById('caloriesSection');
 toggleCaloriesBtn.addEventListener('click', () => {
   caloriesSection.style.display = caloriesSection.style.display === 'none' ? 'block' : 'none';
+});
+
+// bulk and cut 
+const toggleBulkCutBtn = document.getElementById('toggleBulkCut');
+const bulkCutSection = document.getElementById('bulkCutSection');
+toggleBulkCutBtn.addEventListener('click', () => {
+  bulkCutSection.style.display = bulkCutSection.style.display === 'none' ? 'block' : 'none';
 });
 
 // Form submission
@@ -41,21 +49,68 @@ form.addEventListener('submit', async (e) => {
   const targetCalories = document.getElementById('targetCalories')?.value || null;
 
   try {
-    const response = await fetch('http://localhost:3000/recipes', {
+    const gender = document.getElementById('gender')?.value || null;
+    const age = document.getElementById('age')?.value || null;
+    const bulkWeight = document.getElementById('bulkWeight')?.value || null;
+    const bulkGoal = document.getElementById('bulkGoal')?.value || null;
+
+    let url = 'http://localhost:3000/recipes';
+    let body = {
+      ingredients,
+      goal,
+      nutrition: { minCarbs, maxCarbs, minProtein, maxProtein, minFat, maxFat },
+      calories: { weight, activity, targetCalories }
+    };
+
+    // If Bulk/Cut info is filled → call special endpoint
+    if (gender && bulkWeight && bulkGoal) {
+      url = 'http://localhost:3000/recipes-by-goal';
+      body = { ingredients, gender, age, weightKg: bulkWeight, goal: bulkGoal };
+    }
+
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ingredients,
-        goal,
-        nutrition: { minCarbs, maxCarbs, minProtein, maxProtein, minFat, maxFat },
-        calories: { weight, activity, targetCalories }
-      })
-    });
+      body: JSON.stringify(body)
+  });
 
     const data = await response.json();
     console.log('Backend response:', data);
 
     recipesDiv.innerHTML = '';
+
+    if (url.includes('recipes-by-goal')) {
+  const { meta, recipes } = data;
+
+  recipesDiv.innerHTML += `
+    <div>
+      <h2>Nutrition Summary</h2>
+      <p><strong>Maintenance:</strong> ${meta.maintenance} kcal/day</p>
+      <p><strong>Target:</strong> ${meta.targetDaily} kcal/day (${meta.goal})</p>
+      <p><strong>Per meal:</strong> ${meta.perMeal} kcal (range ${meta.minCalories}-${meta.maxCalories})</p>
+    </div>
+  `;
+
+  if (!recipes.length) {
+    recipesDiv.innerHTML += '<p>No recipes found.</p>';
+  } else {
+    recipes.forEach(recipe => {
+      const div = document.createElement('div');
+      div.style.border = '1px solid #ccc';
+      div.style.padding = '10px';
+      div.style.margin = '10px 0';
+      div.innerHTML = `
+        <h3>${recipe.title}</h3>
+        <img src="${recipe.image}" alt="${recipe.title}" width="200">
+        <p><strong>Calories:</strong> ${recipe.calories ?? "N/A"}</p>
+      `;
+      recipesDiv.appendChild(div);
+    });
+  }
+
+  return; // stop here so the old /recipes rendering doesn’t run
+}
+
     if (data.length === 0) {
       recipesDiv.innerHTML = '<p>No recipes found.</p>';
       return;
