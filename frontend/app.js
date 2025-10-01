@@ -102,13 +102,14 @@ form.addEventListener('submit', async (e) => {
       div.innerHTML = `
         <h3>${recipe.title}</h3>
         <img src="${recipe.image}" alt="${recipe.title}" width="200">
-        <p><strong>Calories:</strong> ${recipe.calories ?? "N/A"}</p>
+        <p><strong>Calories:</strong> ${recipe.calories ? Math.round(recipe.calories) : "N/A"}</p>
+        <p><strong>Nutrition:</strong> Carbs: ${recipe.carbs ? Math.round(recipe.carbs) : 'N/A'}g | Protein: ${recipe.protein ? Math.round(recipe.protein) : 'N/A'}g | Fat: ${recipe.fat ? Math.round(recipe.fat) : 'N/A'}g</p>
       `;
       recipesDiv.appendChild(div);
     });
   }
 
-  return; // stop here so the old /recipes rendering doesn't run
+  return;
 }
 
     if (data.length === 0) {
