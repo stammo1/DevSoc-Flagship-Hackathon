@@ -27,6 +27,8 @@ app.post('/recipes', async (req, res) => {
     let recipes = response.data;
 
     const hasNutritionFilters = nutrition && (
+      nutrition.minCarbs ||
+      nutrition.maxCarbs ||
       nutrition.minProtein || 
       nutrition.maxProtein || 
       nutrition.minFat || 
@@ -44,10 +46,11 @@ app.post('/recipes', async (req, res) => {
               }
             );
 
+            const carbs = parseFloat(nutritionResponse.data.carbs.replace('g', ''));
             const protein = parseFloat(nutritionResponse.data.protein.replace('g', ''));
             const fat = parseFloat(nutritionResponse.data.fat.replace('g', ''));
 
-            return { ...recipe, protein, fat };
+            return { ...recipe, carbs, protein, fat };
           } catch (error) {
             console.error(`Error fetching nutrition for recipe ${recipe.id}:`, error.message);
             return null;
@@ -58,6 +61,8 @@ app.post('/recipes', async (req, res) => {
       recipes = recipesWithNutrition.filter(r => r !== null);
 
       recipes = recipes.filter(recipe => {
+        if (nutrition.minCarbs && recipe.carbs < parseFloat(nutrition.minCarbs)) return false;
+        if (nutrition.maxCarbs && recipe.carbs > parseFloat(nutrition.maxCarbs)) return false;
         if (nutrition.minProtein && recipe.protein < parseFloat(nutrition.minProtein)) return false;
         if (nutrition.maxProtein && recipe.protein > parseFloat(nutrition.maxProtein)) return false;
         if (nutrition.minFat && recipe.fat < parseFloat(nutrition.minFat)) return false;
