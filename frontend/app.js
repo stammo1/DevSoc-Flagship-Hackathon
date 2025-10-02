@@ -1,7 +1,6 @@
 const form = document.getElementById('recipeForm');
 const recipesDiv = document.getElementById('recipes');
 
-// Toggle Advanced Options
 const toggleAdvancedBtn = document.getElementById('toggleAdvanced');
 const advancedSection = document.getElementById('advancedSection');
 toggleAdvancedBtn.addEventListener('click', () => {
@@ -9,35 +8,30 @@ toggleAdvancedBtn.addEventListener('click', () => {
 });
 
 
-// Toggle Nutritional Breakdown
 const toggleNutritionBtn = document.getElementById('toggleNutrition');
 const nutritionSection = document.getElementById('nutritionSection');
 toggleNutritionBtn.addEventListener('click', () => {
   nutritionSection.style.display = nutritionSection.style.display === 'none' ? 'block' : 'none';
 });
 
-// Toggle Caloric Needs
 const toggleCaloriesBtn = document.getElementById('toggleCalories');
 const caloriesSection = document.getElementById('caloriesSection');
 toggleCaloriesBtn.addEventListener('click', () => {
   caloriesSection.style.display = caloriesSection.style.display === 'none' ? 'block' : 'none';
 });
 
-// bulk and cut 
 const toggleBulkCutBtn = document.getElementById('toggleBulkCut');
 const bulkCutSection = document.getElementById('bulkCutSection');
 toggleBulkCutBtn.addEventListener('click', () => {
   bulkCutSection.style.display = bulkCutSection.style.display === 'none' ? 'block' : 'none';
 });
 
-// Form submission
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const ingredients = document.getElementById('ingredients').value.split(',');
   const goal = document.getElementById('goal') ? document.getElementById('goal').value : null;
 
-  // Grab advanced fields if they exist
   const minCarbs = document.getElementById('minCarbs')?.value || null;
   const maxCarbs = document.getElementById('maxCarbs')?.value || null;
   const minProtein = document.getElementById('minProtein')?.value || null;
@@ -62,7 +56,6 @@ form.addEventListener('submit', async (e) => {
       calories: { weight, activity, targetCalories }
     };
 
-    // If Bulk/Cut info is filled → call special endpoint
     if (gender && bulkWeight && bulkGoal) {
       url = 'http://localhost:3000/recipes-by-goal';
       body = { ingredients, gender, age, weightKg: bulkWeight, goal: bulkGoal };
@@ -120,7 +113,7 @@ form.addEventListener('submit', async (e) => {
     });
   }
 
-  return; // stop here so the old /recipes rendering doesn't run
+  return;
 }
 
     if (data.length === 0) {

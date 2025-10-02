@@ -7,17 +7,18 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Meal Planner</h1>
+  <h1>🥗 Plately 🍴</h1>
 
   <form id="recipeForm">
     <input type="text" id="ingredients" placeholder="Ingredients, comma separated" />
 
-     <!-- Advanced toggle -->
   <button type="button" id="toggleAdvanced">Advanced Options</button>
 
-  <!-- Advanced Sections (hidden by default) -->
   <div id="advancedSection" style="display:none;">
     <button type="button" id="toggleNutrition">Nutritional Breakdown</button>
+    <button type="button" id="toggleBulkCut">Bulk / Cut</button>
+    <button type="button" id="toggleCalories">Caloric Needs</button>
+
     <div id="nutritionSection" style="display:none;">
       <div class="nutrient-row">
         <label>Carbs Min: <input type="number" id="minCarbs" /></label>
@@ -35,8 +36,7 @@
       </div>
     </div>
 
-      <!-- Bulk / Cut toggle -->
-  <button type="button" id="toggleBulkCut">Bulk / Cut</button>
+  
   <div id="bulkCutSection" style="display:none;">
     <label>Gender:
       <select id="gender">
@@ -55,7 +55,7 @@
     </label>
   </div>
 
-    <button type="button" id="toggleCalories">Caloric Needs</button>
+    
     <div id="caloriesSection" style="display:none;">
       <label>Weight (kg): <input type="number" id="weight" /></label>
       <label>Activity Level:
@@ -73,16 +73,13 @@
     <button type="submit">Get Recipes</button>
   </form>
 
-  <!-- Recipes list -->
   <div id="recipes"></div>
-
-  <!-- Floating decorative icons -->
   <div class="floating-icon" style="top: 10%; left: 5%;">&#127828;</div>
   <div class="floating-icon" style="top: 20%; right: 8%;">&#127859;</div>
   <div class="floating-icon" style="bottom: 15%; left: 12%;">&#127813;</div>
   <div class="floating-icon" style="bottom: 20%; right: 10%;">&#127856;</div>
 
-  <!-- Background emoji decorations -->
+  
   <div class="bg-emoji" aria-hidden="true">
     <span>&#127789;</span><span>&#127813;</span><span>&#127859;</span><span>&#127847;</span>
     <span>&#127817;</span><span>&#129367;</span><span>&#127836;</span><span>&#127838;</span>
