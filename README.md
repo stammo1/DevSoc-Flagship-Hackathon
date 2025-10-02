@@ -8,7 +8,12 @@ A simple meal planner web application designed to help students prepare meals ba
 - [Tech Stack](#tech-stack)
 - [API](#api)
 - [Features](#features)
+- [Prerequisites](#prerequisites)
 - [Setup Instructions](#setup-instructions)
+- [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
 
 ---
 
@@ -22,7 +27,8 @@ A simple meal planner web application designed to help students prepare meals ba
 **Back End**  
 - Node.js (Express)  
 - Axios (for API requests)  
-
+- dotenv (for environment variables)
+- CORS (for cross-origin requests)
 ---
 
 ## API
@@ -36,6 +42,26 @@ A simple meal planner web application designed to help students prepare meals ba
 - Nutrition breakdown per recipe  
 - Input personal details (weight, age, gender, activity level, etc.) for customized suggestions  
 - Simple, responsive UI  
+
+---
+
+## Prerequisites
+
+- Node.js (version 18 or higher)
+- npm (Node Package Manager)
+- A Spoonacular API account (free tier available)
+
+---
+
+
+## Get Your Spoonacular API Key
+
+- Visit https://spoonacular.com/food-api
+- Click on "Start Now" or "Get Access" button
+- Sign up for a free account using your email address
+- After logging in, navigate to your profile/dashboard
+- Go to the "My Console" or "API Key" section
+- Copy your API key
 
 ---
 
